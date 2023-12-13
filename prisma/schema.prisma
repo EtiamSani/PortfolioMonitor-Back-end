@@ -9,3 +9,101 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Company {
+  id             String     @id @default(uuid())
+  name           String
+  ticker         String
+  currency       String
+  type           String
+  capitalisation String
+  per            Int
+  low52          Int?
+  high52         Int?
+  Volume         Int?
+  numberOfStocks Int
+  pru            Int
+  stockCategory  String
+  gics           String?
+  country        String
+  annualDividend Int
+  buy            Buy[]
+  sell           Sell[]
+  dividend       Dividend[]
+
+  PortfolioCompany PortfolioCompany[]
+}
+
+model Buy {
+  id        String   @id @default(uuid())
+  nature    String
+  objective String
+  message   String
+  createdAt DateTime @default(now())
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId String
+}
+
+model Sell {
+  id        String   @id @default(uuid())
+  nature    String
+  objective String
+  message   String
+  createdAt DateTime @default(now())
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId String
+}
+
+model Dividend {
+  id               String   @id @default(uuid())
+  createdAt        DateTime @default(now())
+  amountOfDividend Int
+  company          Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId        String
+}
+
+model PortfolioOwner {
+  id                String              @id @default(uuid())
+  username          String
+  email             String
+  isEmailValid     Boolean        @default(false)
+  isOwner           Boolean
+  verifyToken      String         @default(uuid())
+  password          String
+  portfolio         Portfolio[]
+  PortfolioFollower PortfolioFollower[]
+}
+
+model Portfolio {
+  id                String              @id @default(uuid())
+  name              String
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  portfolioOwner    PortfolioOwner      @relation(fields: [portfolioOwnerId], references: [id], onDelete: Cascade)
+  portfolioOwnerId  String
+  portfolioFollower PortfolioFollower[]
+  PortfolioCompany  PortfolioCompany[]
+}
+
+model PortfolioCompany {
+  id          String    @id @default(uuid())
+  createdAt   DateTime  @default(now())
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id])
+  portfolioId String
+  company     Company   @relation(fields: [companyId], references: [id])
+  companyId   String
+}
+
+model PortfolioFollower {
+  id               String         @id @default(uuid())
+  username         String
+  email            String
+  isEmailValid     Boolean        @default(false)
+  isOwner          Boolean
+  verifyToken      String         @default(uuid())
+  password         String
+  portfolioOwner   PortfolioOwner @relation(fields: [portfolioOwnerId], references: [id], onDelete: Cascade)
+  portfolioOwnerId String
+  Portfolio        Portfolio?     @relation(fields: [portfolioId], references: [id])
+  portfolioId      String?
+}
