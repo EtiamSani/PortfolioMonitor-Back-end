@@ -9,7 +9,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class AuthPortfolioOwnerService {
-    constructor(private prisma: PrismaService, private config: ConfigService,private jwt: JwtService,) {}
+    constructor(private prisma: PrismaService, private config: ConfigService, private jwt: JwtService,) {}
 
     async signup(dto : AuthDto){
         const hash = await argon.hash(dto.password);
@@ -22,9 +22,9 @@ export class AuthPortfolioOwnerService {
                     isOwner: true
                 },
             });
-
             return this.signToken(portfolioOwner.id, portfolioOwner.email);
-        }catch (error) {
+
+        } catch (error) {
             if (
               error instanceof
               PrismaClientKnownRequestError
