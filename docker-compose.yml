@@ -1,10 +1,10 @@
 version: '3.8'
 services:
-  eip-db:
+  eip:
     image: postgres:latest
-    environment:
-      POSTGRES_DB: eip
-      POSTGRES_USER: Admineip
-      POSTGRES_PASSWORD: admineip
     ports:
-      - "5432:5432"
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: eip
+      POSTGRES_PASSWORD: eip
+      POSTGRES_DB: eip

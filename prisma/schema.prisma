@@ -67,7 +67,7 @@ model PortfolioOwner {
   username          String
   email             String
   isEmailValid     Boolean        @default(false)
-  isOwner           Boolean
+  isOwner           Boolean       @default(true)
   verifyToken      String         @default(uuid())
   password          String
   portfolio         Portfolio[]
