@@ -8,10 +8,10 @@ export class AuthDto {
     @IsEmail()
     @IsNotEmpty()
     email: string;
-    isEmailValid: boolean;
-    isOwner: boolean;
-    verifyToken:string
+    isEmailValid?: boolean;
+    isOwner?: boolean;
+    verifyToken?:string
     @IsString()
     @IsNotEmpty()
-    password?: string;
+    password: string;
 }

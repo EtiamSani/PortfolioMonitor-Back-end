@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "PortfolioOwner" ALTER COLUMN "isEmailValid" DROP NOT NULL,
+ALTER COLUMN "isOwner" DROP NOT NULL,
+ALTER COLUMN "verifyToken" DROP NOT NULL;

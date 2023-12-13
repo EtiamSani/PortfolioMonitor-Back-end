@@ -65,10 +65,10 @@ model Dividend {
 model PortfolioOwner {
   id                String              @id @default(uuid())
   username          String
-  email             String
-  isEmailValid     Boolean        @default(false)
-  isOwner           Boolean       @default(true)
-  verifyToken      String         @default(uuid())
+  email             String        @unique
+  isEmailValid     Boolean?        @default(false)
+  isOwner           Boolean?       @default(true)
+  verifyToken      String?         @default(uuid())
   password          String
   portfolio         Portfolio[]
   PortfolioFollower PortfolioFollower[]
