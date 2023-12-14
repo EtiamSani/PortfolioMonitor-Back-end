@@ -1,6 +1,6 @@
 import {ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { AuthDto } from './dto';
+import { AuthDto, SignInDto } from './dto';
 import * as argon from 'argon2';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -39,7 +39,7 @@ export class AuthPortfolioOwnerService {
           }
     }
 
-    async signin(dto: AuthDto) {
+    async signin(dto: SignInDto) {
        
         const portfolioOwner =
           await this.prisma.portfolioOwner.findUnique({
