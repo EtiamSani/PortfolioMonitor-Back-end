@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { AuthPortfolioOwnerModule } from './auth-portfolio-owner/auth-portfolio-owner.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
+import { PortfolioModule } from './portfolio/portfolio.module';
 
 
 
@@ -10,7 +11,8 @@ import { ConfigModule } from '@nestjs/config';
     ConfigModule.forRoot({
     isGlobal: true,}),
     AuthPortfolioOwnerModule,
-    PrismaModule
+    PrismaModule,
+    PortfolioModule
   ],
 })
 export class AppModule {}
