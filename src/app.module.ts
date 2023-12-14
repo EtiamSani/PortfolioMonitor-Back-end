@@ -9,10 +9,11 @@ import { PortfolioModule } from './portfolio/portfolio.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-    isGlobal: true,}),
+    isGlobal: true,
+  }),
     AuthPortfolioOwnerModule,
     PrismaModule,
-    PortfolioModule
+    PortfolioModule,
   ],
 })
 export class AppModule {}
