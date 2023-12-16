@@ -22,7 +22,7 @@ export class AuthPortfolioOwnerService {
                     isOwner: true
                 },
             });
-            return this.signToken(portfolioOwner.id, portfolioOwner.email);
+            return this.signToken(portfolioOwner.id, portfolioOwner.email, portfolioOwner.username, portfolioOwner.isOwner);
 
         } catch (error) {
             if (
@@ -63,16 +63,20 @@ export class AuthPortfolioOwnerService {
           throw new ForbiddenException(
             'Credentials incorrect',
           );
-        return this.signToken(portfolioOwner.id, portfolioOwner.email);
+        return this.signToken(portfolioOwner.id, portfolioOwner.email, portfolioOwner.username, portfolioOwner.isOwner);
       }
     
       async signToken(
         userId: string,
         email: string,
+        username: string,
+        isOwner: boolean
       ): Promise<{ access_token: string }> {
         const payload = {
           sub: userId,
           email,
+          username,
+          isOwner,
         };
         const secret = this.config.get('JWT_SECRET');
         

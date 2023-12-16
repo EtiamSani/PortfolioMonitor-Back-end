@@ -21,13 +21,20 @@ export class PortfolioService {
         }
     }
 
-    async getPortfolioNames(@Param('portfolioOwnerId') portfolioOwnerId: string){
+    async getPortfolioWithCompanies(@Param('portfolioOwnerId') portfolioOwnerId: string){
 
         try {
             const getPortfolioNames = await this.prisma.portfolio.findMany({
                 where: {
                     portfolioOwnerId:portfolioOwnerId
-                }
+                },
+                include: {
+                    PortfolioCompany: { 
+                        include: {
+                            company: true 
+                        }
+                    }
+                },
             })
             return getPortfolioNames
         } catch (error) {

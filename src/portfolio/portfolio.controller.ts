@@ -14,7 +14,7 @@ export class PortfolioController {
     }
 
     @Get(':portfolioOwnerId')
-    getPortfolioNames(@Param('portfolioOwnerId') portfolioOwnerId: string){
-        return this.portfolioService.getPortfolioNames(portfolioOwnerId)
+    getPortfolioWithCompanies(@Param('portfolioOwnerId') portfolioOwnerId: string){
+        return this.portfolioService.getPortfolioWithCompanies(portfolioOwnerId)
     }
 }
