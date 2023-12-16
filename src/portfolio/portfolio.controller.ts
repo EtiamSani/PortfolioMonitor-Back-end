@@ -1,9 +1,9 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { PortfolioService } from './portfolio.service';
 import { PortfolioDto } from './dto/portfolio.dto';
 import { JwtGuard } from 'src/auth-portfolio-owner/guard';
 
-@UseGuards(JwtGuard)
+// @UseGuards(JwtGuard)
 @Controller('portfolio')
 export class PortfolioController {
     constructor(private portfolioService : PortfolioService){}
@@ -11,5 +11,10 @@ export class PortfolioController {
     @Post()
     creatPortfolio(@Body() dto:PortfolioDto){
         return this.portfolioService.creatPortfolio(dto)
+    }
+
+    @Get(':portfolioOwnerId')
+    getPortfolioNames(@Param('portfolioOwnerId') portfolioOwnerId: string){
+        return this.portfolioService.getPortfolioNames(portfolioOwnerId)
     }
 }

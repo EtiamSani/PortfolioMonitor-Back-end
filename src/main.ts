@@ -11,6 +11,7 @@ async function bootstrap() {
     whitelist: true,
     }),
   ); // whiteliste a true permet de filtrer les données c-à-d accepter uniquement des données dans le body qui ont été définis dans le DTO
+  app.enableCors();
   await app.listen(3001);
 }
 bootstrap();

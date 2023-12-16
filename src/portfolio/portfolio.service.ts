@@ -1,4 +1,4 @@
-import { Injectable} from '@nestjs/common';
+import { Injectable, Param} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PortfolioDto } from './dto';
 
@@ -16,6 +16,20 @@ export class PortfolioService {
                 }
             })
             return createdPortfolio
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    async getPortfolioNames(@Param('portfolioOwnerId') portfolioOwnerId: string){
+
+        try {
+            const getPortfolioNames = await this.prisma.portfolio.findMany({
+                where: {
+                    portfolioOwnerId:portfolioOwnerId
+                }
+            })
+            return getPortfolioNames
         } catch (error) {
             console.log(error)
         }
