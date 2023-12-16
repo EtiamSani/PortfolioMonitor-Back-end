@@ -3,6 +3,7 @@ import { AuthPortfolioOwnerModule } from './auth-portfolio-owner/auth-portfolio-
 import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { PortfolioModule } from './portfolio/portfolio.module';
+import { CompanyModule } from './company/company.module';
 
 
 
@@ -14,6 +15,7 @@ import { PortfolioModule } from './portfolio/portfolio.module';
     AuthPortfolioOwnerModule,
     PrismaModule,
     PortfolioModule,
+    CompanyModule,
   ],
 })
 export class AppModule {}

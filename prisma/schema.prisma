@@ -20,7 +20,7 @@ model Company {
   per            Int
   low52          Int?
   high52         Int?
-  Volume         Int?
+  volume         Int?
   numberOfStocks Int
   pru            Int
   stockCategory  String
