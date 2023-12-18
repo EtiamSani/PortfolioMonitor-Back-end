@@ -34,6 +34,8 @@ model Buy {
   nature    String
   objective String
   message   String
+  numberOfStocks Int
+  newPru Int
   createdAt DateTime @default(now())
   company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId String

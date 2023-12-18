@@ -4,6 +4,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { PortfolioModule } from './portfolio/portfolio.module';
 import { CompanyModule } from './company/company.module';
+import { BuyCompanyModule } from './buy-company/buy-company.module';
 
 
 
@@ -16,6 +17,7 @@ import { CompanyModule } from './company/company.module';
     PrismaModule,
     PortfolioModule,
     CompanyModule,
+    BuyCompanyModule,
   ],
 })
 export class AppModule {}
