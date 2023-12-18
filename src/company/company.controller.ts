@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Patch, Post } from '@nestjs/common';
 import { CompanyDTO } from './dto';
 import { CompanyService } from './company.service';
 
@@ -11,4 +11,14 @@ export class CompanyController {
         return this.companyService.createCompanyAndConnectToPortfolio(dto, ownerPortfolioId)
     }
     
+    @Delete('delete-company/:companyId')
+    deleteCompanyAndDisconnectFromPortfolio(@Param('companyId') companyId: string){
+        return this.companyService.deleteCompanyAndDisconnectFromPortfolio(companyId)
+    }
+
+    @Patch('update-company/:companyId')
+    updateCompany(@Param('companyId') companyId: string, @Body() dto:CompanyDTO){
+        return this.companyService.updateCompany(dto,companyId)
+    }
+
 }
