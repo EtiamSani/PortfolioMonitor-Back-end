@@ -74,6 +74,10 @@ model PortfolioOwner {
 model Portfolio {
   id                String              @id @default(uuid())
   name              String
+  moneyInput        Int?
+  liquidity         Int?
+  gainOrLost        Int?
+  portfolioValue    Int?
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
   portfolioOwner    PortfolioOwner      @relation(fields: [portfolioOwnerId], references: [id], onDelete: Cascade)
