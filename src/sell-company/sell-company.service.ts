@@ -1,10 +1,12 @@
 import { Injectable, Param } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SellCompanyDto } from './dto';
+import { BotGateway } from 'src/discord/bot.gateway';
 
 @Injectable()
 export class SellCompanyService {
-    constructor(private prisma: PrismaService){}
+    constructor(private prisma: PrismaService,
+        private botGateway: BotGateway){}
 
     async sellShareOfACompany(dto:SellCompanyDto, @Param('companyId') companyId: string){
         console.log(dto)
@@ -42,7 +44,8 @@ export class SellCompanyService {
             }
             const removedShareId = sellShareOfACompany.id
             this.removeShareToCompany(companyId,removedShareId)
-            
+            const message = `Vente de ${dto.numberOfStocks} ${dto.nature} au prix de ${dto.priceOfShare} ! Motivation : ${dto.objective}. Commentaire : ${dto.message}.`;
+            this.botGateway.sendNotification(message); 
             
 
             return sellShareOfACompany
