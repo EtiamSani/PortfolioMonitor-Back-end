@@ -18,7 +18,7 @@ model Company {
   type           String
   capitalisation String
   numberOfStocks Int
-  pru            Int
+  pru            Float
   stockCategory  String
   gics           String?
   country        String
@@ -35,8 +35,8 @@ model Buy {
   objective String
   message   String
   numberOfStocks Int
-  priceOfShare Int?
-  newPru Int
+  priceOfShare Float?
+  newPru Float
   createdAt DateTime @default(now())
   company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId String
@@ -75,10 +75,10 @@ model PortfolioOwner {
 model Portfolio {
   id                String              @id @default(uuid())
   name              String?
-  moneyInput        Int?
-  liquidity         Int?
-  gainOrLost        Int?
-  portfolioValue    Int?
+  moneyInput        Float?
+  liquidity         Float?
+  gainOrLost        Float?
+  portfolioValue    Float?
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
   portfolioOwner    PortfolioOwner      @relation(fields: [portfolioOwnerId], references: [id], onDelete: Cascade)
