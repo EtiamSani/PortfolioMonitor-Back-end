@@ -8,7 +8,8 @@ export class BuyCompanyController {
 
     @Post(':companyId')
     buyNewShareOfACompany(@Param('companyId') companyId: string, @Body() dto:BuyCompanyDto){
-        return this.buyCompanyService.buyNewShareOfACompany(companyId,dto)
+        console.log(dto)
+        return this.buyCompanyService.buyNewShareOfACompany(dto, companyId)
     }
 
 }

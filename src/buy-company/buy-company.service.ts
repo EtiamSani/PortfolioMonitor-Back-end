@@ -5,7 +5,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class BuyCompanyService {
     constructor(private prisma: PrismaService){}
-    async buyNewShareOfACompany(@Param('companyId') companyId: string, @Body() dto:BuyCompanyDto){
+    async buyNewShareOfACompany(dto:BuyCompanyDto, @Param('companyId') companyId: string){
+        console.log(dto)
         try {
             const buyNewShareOfACompany = await this.prisma.buy.create({
                 data: {
@@ -14,6 +15,7 @@ export class BuyCompanyService {
                     message: dto.message,
                     numberOfStocks: dto.numberOfStocks,
                     newPru: dto.newPru,
+                    priceOfShare: dto.priceOfShare,
                     companyId: companyId
                 },
             }
@@ -21,7 +23,7 @@ export class BuyCompanyService {
             const addedShareId = buyNewShareOfACompany.id
             this.addNewBoughtShareToCompany(companyId,addedShareId)
             this.updatePru(companyId, dto.newPru)
-            return addedShareId
+            return buyNewShareOfACompany
             } catch(error) {
                 console.log(error);
             throw new Error('Une erreur est survenue lors de la création de l\'entreprise et de la liaison au portefeuille.');
@@ -29,6 +31,7 @@ export class BuyCompanyService {
     }
 
     async addNewBoughtShareToCompany(@Param('companyId') companyId: string, addedShareId: string){
+        
         const findCompany = await this.prisma.company.findUnique({
             where: {
                 id: companyId

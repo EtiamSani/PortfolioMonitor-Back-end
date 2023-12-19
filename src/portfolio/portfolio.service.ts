@@ -35,10 +35,61 @@ export class PortfolioService {
                         }
                     }
                 },
+                orderBy: {
+                    createdAt: 'asc' 
+                }
             })
             return getPortfolioNames
         } catch (error) {
             console.log(error)
+        }
+    }
+
+    async modificationOfPortfolio(@Param('portfolioId') portfolioId: string, dto:PortfolioDto){
+
+        console.log(dto)
+        try {
+            const updatedFields = {};
+    
+            if (dto.moneyInput !== undefined) {
+                updatedFields['moneyInput'] = dto.moneyInput;
+            }
+    
+            if (dto.liquidity !== undefined) {
+                updatedFields['liquidity'] = dto.liquidity;
+            }
+    
+            if (dto.gainOrLost !== undefined) {
+                updatedFields['gainOrLost'] = dto.gainOrLost;
+            }
+    
+            if (dto.portfolioValue !== undefined) {
+                updatedFields['portfolioValue'] = dto.portfolioValue;
+            }
+    
+            // Mise à jour sélective des champs spécifiés
+            const updatedPortfolio = await this.prisma.portfolio.update({
+                where: { id: portfolioId },
+                data: updatedFields,
+            });
+    
+            return updatedPortfolio;
+
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    async getPortfolioById(@Param('portfolioId') portfolioId: string){
+        try {
+            const findPortfolioById = await this.prisma.portfolio.findUnique({
+                where: {
+                    id:portfolioId
+                }
+            })
+            return findPortfolioById
+        } catch (error) {
+            
         }
     }
 }

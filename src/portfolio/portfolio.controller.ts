@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { PortfolioService } from './portfolio.service';
 import { PortfolioDto } from './dto/portfolio.dto';
 import { JwtGuard } from 'src/auth-portfolio-owner/guard';
@@ -16,5 +16,15 @@ export class PortfolioController {
     @Get(':portfolioOwnerId')
     getPortfolioWithCompanies(@Param('portfolioOwnerId') portfolioOwnerId: string){
         return this.portfolioService.getPortfolioWithCompanies(portfolioOwnerId)
+    }
+
+    @Get('get-portfolio/:portfolioId')
+    getPortfolioById(@Param('portfolioId') portfolioId: string){
+        return this.portfolioService.getPortfolioById(portfolioId)
+    }
+
+    @Patch('update/:portfolioId')
+    modificationOfPortfolio(@Param('portfolioId') portfolioId: string, @Body() dto:PortfolioDto ){
+        return this.portfolioService.modificationOfPortfolio(portfolioId, dto)
     }
 }

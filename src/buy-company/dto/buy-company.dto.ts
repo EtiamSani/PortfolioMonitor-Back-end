@@ -1,4 +1,4 @@
-import { IsNumber, IsString } from "class-validator";
+import { IsNumber, IsOptional, IsString } from "class-validator";
 
 export class BuyCompanyDto {
     @IsString()
@@ -13,4 +13,8 @@ export class BuyCompanyDto {
     newPru: number;
     @IsString()
     companyId:string
+
+    @IsOptional()
+    @IsNumber()
+    priceOfShare?:number | null
 }
