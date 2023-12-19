@@ -20,9 +20,31 @@ export class BuyCompanyService {
                 },
             }
             )
+
+            const companyWithPortfolio = await this.prisma.company.findUnique({
+                where: {
+                    id: companyId,
+                },
+                include: {
+                    PortfolioCompany: {
+                        include: {
+                            portfolio: true,
+                        },
+                    },
+                },
+            });
+
+           
+            if (companyWithPortfolio && companyWithPortfolio.PortfolioCompany && companyWithPortfolio.PortfolioCompany.length > 0) {
+                const portfolioId = companyWithPortfolio.PortfolioCompany[0].portfolio.id;
+                const totalAmount = dto.priceOfShare * dto.numberOfStocks;
+                await this.updateLiquidity(portfolioId, totalAmount);
+            }
             const addedShareId = buyNewShareOfACompany.id
             this.addNewBoughtShareToCompany(companyId,addedShareId)
             this.updatePru(companyId, dto.newPru)
+            
+
             return buyNewShareOfACompany
             } catch(error) {
                 console.log(error);
@@ -69,4 +91,38 @@ export class BuyCompanyService {
         })
         return findCompany
     }
+
+    async updateLiquidity(companyId: string, amount: number) {
+        try {
+            // Obtenez le portefeuille
+            const portfolio = await this.prisma.portfolio.findFirst({
+                where: {
+                    id: companyId
+                }
+            });
+
+            // Si le portefeuille existe
+            if (portfolio) {
+                const updatedLiquidity = portfolio.liquidity - amount;
+
+                // Mettez à jour la liquidité dans la table Portfolio
+                await this.prisma.portfolio.update({
+                    where: {
+                        id: companyId
+                    },
+                    data: {
+                        liquidity: updatedLiquidity
+                    }
+                });
+
+                return updatedLiquidity;
+            } else {
+                throw new Error('Le portefeuille n\'existe pas.');
+            }
+        } catch (error) {
+            console.log(error);
+            throw new Error('Une erreur est survenue lors de la mise à jour de la liquidité.');
+        }
+    }
+
 }
