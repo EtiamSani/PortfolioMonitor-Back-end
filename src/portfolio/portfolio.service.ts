@@ -53,7 +53,21 @@ export class PortfolioService {
     
             if (dto.moneyInput !== undefined) {
                 updatedFields['moneyInput'] = dto.moneyInput;
+
+                const portfolio = await this.prisma.portfolio.findUnique({
+                    where: { id: portfolioId },
+                    select: {moneyInput: true, liquidity: true },
+                });
+
+                const currentMoneyInput = portfolio.moneyInput || 0; 
+                const updatedMoneyInput = currentMoneyInput + dto.moneyInput; // Nouvelle valeur de moneyInput
+
+                updatedFields['moneyInput'] = updatedMoneyInput
+                const updatedLiquidity = (portfolio.liquidity || 0) + dto.moneyInput;
+                updatedFields['liquidity'] = updatedLiquidity;
+
             }
+
     
             if (dto.liquidity !== undefined) {
                 updatedFields['liquidity'] = dto.liquidity;
@@ -66,6 +80,7 @@ export class PortfolioService {
             if (dto.portfolioValue !== undefined) {
                 updatedFields['portfolioValue'] = dto.portfolioValue;
             }
+            
     
             // Mise à jour sélective des champs spécifiés
             const updatedPortfolio = await this.prisma.portfolio.update({
