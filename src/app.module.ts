@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PortfolioModule } from './portfolio/portfolio.module';
 import { CompanyModule } from './company/company.module';
 import { BuyCompanyModule } from './buy-company/buy-company.module';
+import { SellCompanyModule } from './sell-company/sell-company.module';
 
 
 
@@ -18,6 +19,7 @@ import { BuyCompanyModule } from './buy-company/buy-company.module';
     PortfolioModule,
     CompanyModule,
     BuyCompanyModule,
+    SellCompanyModule,
   ],
 })
 export class AppModule {}

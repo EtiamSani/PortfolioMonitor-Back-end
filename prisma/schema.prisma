@@ -47,6 +47,8 @@ model Sell {
   nature    String
   objective String
   message   String
+  numberOfStocks Int
+  priceOfShare Float?
   createdAt DateTime @default(now())
   company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId String
