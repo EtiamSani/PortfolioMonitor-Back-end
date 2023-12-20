@@ -19,6 +19,7 @@ model Company {
   capitalisation String
   numberOfStocks Int
   pru            Float
+  currentStockPrice Float?
   stockCategory  String
   gics           String?
   country        String

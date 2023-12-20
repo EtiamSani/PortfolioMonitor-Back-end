@@ -8,7 +8,6 @@ export class BuyCompanyService {
     constructor(private prisma: PrismaService,
         private botGateway: BotGateway){}
     async buyNewShareOfACompany(dto:BuyCompanyDto, @Param('companyId') companyId: string){
-        console.log(dto)
         try {
             const buyNewShareOfACompany = await this.prisma.buy.create({
                 data: {

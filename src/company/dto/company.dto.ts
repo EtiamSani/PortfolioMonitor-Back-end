@@ -15,6 +15,8 @@ export class CompanyDTO {
     numberOfStocks: number;
     @IsNumber()
     pru: number;
+    @IsNumber()
+    currentStockPrice: number;
     @IsString()
     stockCategory: string;
     @IsString()

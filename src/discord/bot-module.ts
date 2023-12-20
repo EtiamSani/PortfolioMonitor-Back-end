@@ -4,6 +4,7 @@ import { BotGateway } from './bot.gateway'
 
 @Module({
   imports: [DiscordModule.forFeature()],
-  providers: [BotGateway]
+  providers: [BotGateway],
+  exports: [BotGateway],
 })
 export class BotModule {}

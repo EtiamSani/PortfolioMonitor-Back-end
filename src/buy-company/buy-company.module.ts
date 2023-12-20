@@ -3,10 +3,11 @@ import { BuyCompanyService } from './buy-company.service';
 import { BuyCompanyController } from './buy-company.controller';
 import { DiscordModule } from '@discord-nestjs/core';
 import { BotGateway } from 'src/discord/bot.gateway';
+import { BotModule } from 'src/discord/bot-module';
 
 @Module({
-  imports: [DiscordModule.forFeature()],
-  providers: [BuyCompanyService, BotGateway],
+  imports: [BotModule],
+  providers: [BuyCompanyService],
   controllers: [BuyCompanyController]
 })
 export class BuyCompanyModule {}

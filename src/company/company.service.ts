@@ -7,8 +7,9 @@ export class CompanyService {
     constructor(private prisma: PrismaService){}
 
     async createCompanyAndConnectToPortfolio(dto:CompanyDTO, @Param('ownerPortfolioId') ownerPortfolioId:string){
+        console.log('dto', dto)
             try {
-                // Création de la nouvelle entreprise
+                const stockPrice = await this.fetchStockPrice(dto.ticker);
                 const createdCompany = await this.prisma.company.create({
                     data: {
                         name: dto.name,
@@ -18,12 +19,15 @@ export class CompanyService {
                         capitalisation: dto.capitalisation,
                         numberOfStocks: dto.numberOfStocks,
                         pru: dto.pru,
+                        currentStockPrice: stockPrice,
                         stockCategory: dto.stockCategory,
                         gics: dto.gics,
                         country: dto.country,
                         
                     },
                 });
+
+                
     
                 // Association de l'entreprise au portfolio existant
                 const portfolioCompany = await this.prisma.portfolioCompany.create({
@@ -98,4 +102,21 @@ export class CompanyService {
             throw new Error('Une erreur est survenue lors de la mise a jour de l\'entreprise.');
         }
     }
+
+async fetchStockPrice(ticker: string): Promise<number> {
+    try {
+        const apiUrl = `https://api.gurufocus.com/public/user/${process.env.GURUFOCUS_TOKEN}/stock/${ticker}/quote`;
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error('Impossible de récupérer le prix de l\'action');
+        }
+        const data = await response.json();
+        const stockPrice = data.Price;
+        return stockPrice;
+    } catch (error) {
+        console.error('Erreur lors de la récupération du prix de l\'action :', error);
+        throw new Error('Une erreur est survenue lors de la récupération du prix de l\'action');
+    }
+}
+
 }
