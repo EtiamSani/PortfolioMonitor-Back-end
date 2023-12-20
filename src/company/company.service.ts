@@ -10,6 +10,7 @@ export class CompanyService {
         console.log('dto', dto)
             try {
                 const stockPrice = await this.fetchStockPrice(dto.ticker);
+                const calculatedValues = await this.calculateStockValues(dto,stockPrice)
                 const createdCompany = await this.prisma.company.create({
                     data: {
                         name: dto.name,
@@ -20,6 +21,10 @@ export class CompanyService {
                         numberOfStocks: dto.numberOfStocks,
                         pru: dto.pru,
                         currentStockPrice: stockPrice,
+                        pruValue:calculatedValues.pruValue,
+                        marketValue:calculatedValues.marketValue,
+                        gainOrLoss:calculatedValues.gainOrLoss,
+                        pvMvPercentage:calculatedValues.pvMvPercentage,
                         stockCategory: dto.stockCategory,
                         gics: dto.gics,
                         country: dto.country,
@@ -117,6 +122,30 @@ async fetchStockPrice(ticker: string): Promise<number> {
         console.error('Erreur lors de la récupération du prix de l\'action :', error);
         throw new Error('Une erreur est survenue lors de la récupération du prix de l\'action');
     }
+}
+
+async calculateStockValues(dto: any, stockPrice:any) {
+    
+    const { numberOfStocks, pru, dividendReceived } = dto;
+
+    // Calcul de la valeur PRU
+    const pruValue = numberOfStocks * pru;
+
+    // Calcul de la valeur de marché
+    const marketValue = numberOfStocks * stockPrice;
+
+    // Calcul du gain ou de la perte
+    const gainOrLoss = marketValue - pruValue;
+
+    // Calcul du pourcentage de PV/MV
+    const pvMvPercentage = ((marketValue + dividendReceived - pruValue) / pruValue) * 100;
+    console.log('calculate values', pruValue ,marketValue, gainOrLoss)
+    return {
+        pruValue,
+        marketValue,
+        gainOrLoss,
+        pvMvPercentage,
+    };
 }
 
 }

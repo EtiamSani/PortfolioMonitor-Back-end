@@ -17,6 +17,14 @@ export class CompanyDTO {
     pru: number;
     @IsNumber()
     currentStockPrice: number;
+    @IsNumber()
+    pruValue: number;
+    @IsNumber()
+    marketValue: number;
+    @IsNumber()
+    gainOrLoss: number;
+    @IsNumber()
+    pvMvPercentage: number;
     @IsString()
     stockCategory: string;
     @IsString()

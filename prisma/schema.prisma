@@ -20,6 +20,10 @@ model Company {
   numberOfStocks Int
   pru            Float
   currentStockPrice Float?
+  pruValue Float ? 
+  marketValue Float?
+  gainOrLoss Float?
+  pvMvPercentage Float?
   stockCategory  String
   gics           String?
   country        String
