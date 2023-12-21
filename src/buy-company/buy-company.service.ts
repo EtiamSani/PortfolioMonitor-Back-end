@@ -21,6 +21,7 @@ export class BuyCompanyService {
                 },
             }
             )
+           
 
             const companyWithPortfolio = await this.prisma.company.findUnique({
                 where: {
@@ -42,10 +43,17 @@ export class BuyCompanyService {
                 await this.updateLiquidity(portfolioId, totalAmount);
             }
             const addedShareId = buyNewShareOfACompany.id
-            this.addNewBoughtShareToCompany(companyId,addedShareId)
-            this.updatePru(companyId, dto.newPru)
+            const getReturnOfAddNewBoughtShare = await this.addNewBoughtShareToCompany(companyId,addedShareId)
+            const currentStockPrice = getReturnOfAddNewBoughtShare.currentStockPrice
+    
+            const updateNumberOfSharesInCompany = getReturnOfAddNewBoughtShare.numberOfStocks
             
-            const message = `Achat de ${dto.numberOfStocks} ${dto.nature} au prix de ${dto.priceOfShare} ! Motivation : ${dto.objective}. Commentaire : ${dto.message}. Nouveau PRU ${dto.newPru}.`;
+            this.updatePru(companyId, dto.newPru)
+            const calculatedValues = await this.calculateStockValues(dto,currentStockPrice,updateNumberOfSharesInCompany)
+            // il faut mainteant stocker ces nouvelle valeur dans la table
+            await this.updateCompanyWithCalculatedValues(companyId, calculatedValues);
+            
+            const message = `__**Achat :**__ de ${dto.numberOfStocks} nouvel action(s) de **${dto.nature}** au prix de ${dto.priceOfShare} € ! \n **Motivation :** ${dto.objective}. \n **Commentaire :** ${dto.message}.\n **Nouveau PRU :** ${dto.newPru} €.`;
             this.botGateway.sendNotification(message); 
             return buyNewShareOfACompany
             } catch(error) {
@@ -78,6 +86,7 @@ export class BuyCompanyService {
                     numberOfStocks: addingBuyedStockToExistentStockInCompany
                 }
             })
+            
             return updateNumberOfSharesInCompany
         }
 
@@ -124,6 +133,60 @@ export class BuyCompanyService {
         } catch (error) {
             console.log(error);
             throw new Error('Une erreur est survenue lors de la mise à jour de la liquidité.');
+        }
+    }
+
+    async calculateStockValues(dto: any, currentStockPrice:any,updateNumberOfSharesInCompany:any ) {
+        
+        const { newPru } = dto;
+        let { dividendReceived } = dto; 
+
+        if (dividendReceived == undefined){
+            dividendReceived = 0
+           
+        }
+    
+        // Calcul de la valeur PRU
+        const pruValue = updateNumberOfSharesInCompany * newPru;
+    
+        // Calcul de la valeur de marché
+        const marketValue = updateNumberOfSharesInCompany * currentStockPrice;
+    
+        // Calcul du gain ou de la perte
+        const gainOrLoss = marketValue - pruValue;
+    
+    
+        // Calcul du pourcentage de PV/MV
+        const pvMvPercentage = (((marketValue + dividendReceived) - pruValue) / pruValue) * 100;
+        
+        
+        return {
+            pruValue,
+            marketValue,
+            gainOrLoss,
+            pvMvPercentage,
+        };
+    }
+
+    async updateCompanyWithCalculatedValues(companyId: string, calculatedValues: any) {
+       
+        try {
+            const updatedCompany = await this.prisma.company.update({
+                where: {
+                    id: companyId,
+                },
+                data: {
+                    pruValue: calculatedValues.pruValue,
+                    marketValue: calculatedValues.marketValue,
+                    gainOrLoss: calculatedValues.gainOrLoss,
+                    pvMvPercentage: calculatedValues.pvMvPercentage,
+
+                },
+            });
+            return updatedCompany;
+        } catch (error) {
+            console.log(error);
+            throw new Error('Une erreur est survenue lors de la mise à jour des valeurs calculées dans la table company.');
         }
     }
 

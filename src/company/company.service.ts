@@ -7,7 +7,7 @@ export class CompanyService {
     constructor(private prisma: PrismaService){}
 
     async createCompanyAndConnectToPortfolio(dto:CompanyDTO, @Param('ownerPortfolioId') ownerPortfolioId:string){
-        console.log('dto', dto)
+        
             try {
                 const stockPrice = await this.fetchStockPrice(dto.ticker);
                 const calculatedValues = await this.calculateStockValues(dto,stockPrice)
@@ -60,7 +60,7 @@ export class CompanyService {
                 where: { id: companyId },
             });
             
-            console.log('Company found:', company);
+           
             if (!company) {
                 throw new Error('Entreprise non trouvée.');
             }
@@ -125,7 +125,7 @@ async fetchStockPrice(ticker: string): Promise<number> {
 }
 
 async calculateStockValues(dto: any, stockPrice:any) {
-    console.log('dto in function', dto)
+    
     const { numberOfStocks, pru, dividendReceived } = dto;
 
     // Calcul de la valeur PRU
@@ -139,7 +139,7 @@ async calculateStockValues(dto: any, stockPrice:any) {
 
     // Calcul du pourcentage de PV/MV
     const pvMvPercentage = ((marketValue + dividendReceived - pruValue) / pruValue) * 100;
-    console.log('calculate values', pruValue ,marketValue, gainOrLoss)
+  
     return {
         pruValue,
         marketValue,
