@@ -10,6 +10,7 @@ import { DiscordModule } from '@discord-nestjs/core';
 import { GatewayIntentBits } from 'discord.js';
 import { BotGateway } from './discord/bot.gateway';
 import { DiscordConfigService } from './discord/discord-config.service';
+import { SharesTransactionsModule } from './shares-transactions/shares-transactions.module';
 
 
 const config = new ConfigService();
@@ -37,6 +38,7 @@ const config = new ConfigService();
     BuyCompanyModule,
     SellCompanyModule,
     DiscordModule,
+    SharesTransactionsModule,
   ],
   providers:[BotGateway]
 })

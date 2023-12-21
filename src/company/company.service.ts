@@ -126,7 +126,13 @@ async fetchStockPrice(ticker: string): Promise<number> {
 
 async calculateStockValues(dto: any, stockPrice:any) {
     
-    const { numberOfStocks, pru, dividendReceived } = dto;
+    const { numberOfStocks, pru } = dto;
+    let { dividendReceived } = dto; 
+
+        if (dividendReceived == undefined){
+            dividendReceived = 0
+           
+        }
 
     // Calcul de la valeur PRU
     const pruValue = numberOfStocks * pru;
@@ -138,7 +144,7 @@ async calculateStockValues(dto: any, stockPrice:any) {
     const gainOrLoss = marketValue - pruValue;
 
     // Calcul du pourcentage de PV/MV
-    const pvMvPercentage = ((marketValue + dividendReceived - pruValue) / pruValue) * 100;
+    const pvMvPercentage = (((marketValue + dividendReceived) - pruValue) / pruValue) * 100;
   
     return {
         pruValue,
