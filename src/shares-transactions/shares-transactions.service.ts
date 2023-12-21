@@ -8,7 +8,7 @@ export class SharesTransactionsService {
     async getAllBoughtShares(){
         try {
             const getAllBoughtShares = await this.prisma.buy.findMany({
-              take: 5, 
+              take: 3, 
               orderBy: { createdAt: 'desc' }, 
             });
             return getAllBoughtShares;
@@ -21,7 +21,7 @@ export class SharesTransactionsService {
     async getAllSoldShares(){
         try {
             const getAllSoldedShares = await this.prisma.sell.findMany({
-              take: 5, 
+              take: 3, 
               orderBy: { createdAt: 'desc' }, 
             });
             return getAllSoldedShares;
