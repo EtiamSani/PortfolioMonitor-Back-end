@@ -43,8 +43,15 @@ export class SellCompanyService {
                 await this.updateLiquidity(portfolioId, totalAmount);
             }
             const removedShareId = sellShareOfACompany.id
-            this.removeShareToCompany(companyId,removedShareId)
-            const message = `Vente de ${dto.numberOfStocks} ${dto.nature} au prix de ${dto.priceOfShare} ! Motivation : ${dto.objective}. Commentaire : ${dto.message}.`;
+            const getReturnOfSelledShare = await this.removeShareToCompany(companyId,removedShareId)
+            console.log(getReturnOfSelledShare, 'getReturnOfSelledShare')
+            const currentStockPrice = getReturnOfSelledShare.currentStockPrice
+            const updateNumberOfSharesInCompany = getReturnOfSelledShare.numberOfStocks
+            const companyCurrentPru = getReturnOfSelledShare.pru
+            const calculatedValues = await this.calculateStockValues(dto,currentStockPrice,updateNumberOfSharesInCompany,companyCurrentPru)
+            await this.updateCompanyWithCalculatedValues(companyId, calculatedValues);
+            
+            const message = `__**Vente :**__ de ${dto.numberOfStocks} nouvel action(s) de **${dto.nature}** au prix de ${dto.priceOfShare} € ! \n **Motivation :** ${dto.objective}. \n **Commentaire :** ${dto.message}.`;
             this.botGateway.sendNotification(message); 
             
 
@@ -115,6 +122,60 @@ export class SellCompanyService {
         } catch (error) {
             console.log(error);
             throw new Error('Une erreur est survenue lors de la mise à jour de la liquidité.');
+        }
+    }
+
+    async calculateStockValues(dto: any, currentStockPrice:any,updateNumberOfSharesInCompany:any,companyCurrentPru:any ) {
+        
+       
+        let { dividendReceived } = dto; 
+
+        if (dividendReceived == undefined){
+            dividendReceived = 0
+           
+        }
+    
+        // Calcul de la valeur PRU
+        const pruValue = updateNumberOfSharesInCompany * companyCurrentPru;
+    
+        // Calcul de la valeur de marché
+        const marketValue = updateNumberOfSharesInCompany * currentStockPrice;
+    
+        // Calcul du gain ou de la perte
+        const gainOrLoss = marketValue - pruValue;
+    
+    
+        // Calcul du pourcentage de PV/MV
+        const pvMvPercentage = (((marketValue + dividendReceived) - pruValue) / pruValue) * 100;
+        
+        
+        return {
+            pruValue,
+            marketValue,
+            gainOrLoss,
+            pvMvPercentage,
+        };
+    }
+
+    async updateCompanyWithCalculatedValues(companyId: string, calculatedValues: any) {
+       
+        try {
+            const updatedCompany = await this.prisma.company.update({
+                where: {
+                    id: companyId,
+                },
+                data: {
+                    pruValue: calculatedValues.pruValue,
+                    marketValue: calculatedValues.marketValue,
+                    gainOrLoss: calculatedValues.gainOrLoss,
+                    pvMvPercentage: calculatedValues.pvMvPercentage,
+
+                },
+            });
+            return updatedCompany;
+        } catch (error) {
+            console.log(error);
+            throw new Error('Une erreur est survenue lors de la mise à jour des valeurs calculées dans la table company.');
         }
     }
 }
