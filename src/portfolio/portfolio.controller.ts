@@ -27,4 +27,10 @@ export class PortfolioController {
     modificationOfPortfolio(@Param('portfolioId') portfolioId: string, @Body() dto:PortfolioDto ){
         return this.portfolioService.modificationOfPortfolio(portfolioId, dto)
     }
+
+    @Get('get-portfolio/market-value/:portfolioId')
+        calculatePortfolioMarketValue(@Param('portfolioId') portfolioId: string){
+            return this.portfolioService.calculatePortfolioMarketValue(portfolioId)
+        }
+    
 }

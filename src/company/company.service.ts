@@ -125,7 +125,7 @@ async fetchStockPrice(ticker: string): Promise<number> {
 }
 
 async calculateStockValues(dto: any, stockPrice:any) {
-    
+    console.log('dto in function', dto)
     const { numberOfStocks, pru, dividendReceived } = dto;
 
     // Calcul de la valeur PRU
