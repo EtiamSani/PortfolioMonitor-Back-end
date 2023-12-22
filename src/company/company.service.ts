@@ -32,6 +32,10 @@ export class CompanyService {
                     },
                 });
 
+               
+                    
+                    const totalAmount = createdCompany.currentStockPrice * dto.numberOfStocks;
+                    await this.updateLiquidity(ownerPortfolioId, totalAmount);
                 
     
                 // Association de l'entreprise au portfolio existant
@@ -152,6 +156,39 @@ async calculateStockValues(dto: any, stockPrice:any) {
         gainOrLoss,
         pvMvPercentage,
     };
+}
+
+async updateLiquidity(companyId: string, amount: number) {
+    try {
+        // Obtenez le portefeuille
+        const portfolio = await this.prisma.portfolio.findFirst({
+            where: {
+                id: companyId
+            }
+        });
+
+        // Si le portefeuille existe
+        if (portfolio) {
+            const updatedLiquidity = portfolio.liquidity - amount;
+
+            // Mettez à jour la liquidité dans la table Portfolio
+            await this.prisma.portfolio.update({
+                where: {
+                    id: companyId
+                },
+                data: {
+                    liquidity: updatedLiquidity
+                }
+            });
+
+            return updatedLiquidity;
+        } else {
+            throw new Error('Le portefeuille n\'existe pas.');
+        }
+    } catch (error) {
+        console.log(error);
+        throw new Error('Une erreur est survenue lors de la mise à jour de la liquidité.');
+    }
 }
 
 }

@@ -196,14 +196,12 @@ export class PortfolioService {
 
     
              let totalMarketValue = 0;
-            console.log(getPortfolios)
         getPortfolios.forEach(portefeuille => {
             portefeuille.PortfolioCompany.forEach(entreprise => {
                 totalMarketValue += entreprise.company.marketValue;
             });
         });
 
-        // Vous pouvez retourner la somme totale ou faire ce que vous voulez avec cette valeur
         return totalMarketValue;
         } catch (error) {
             console.log(error)
