@@ -141,7 +141,6 @@ export class PortfolioService {
         }
     }
     
-// TODO quand je change d'onglet, le deuxieme pf est mis a jour avec la meme valeur
     async updateOrInsertPortfolioValue(portfolioValue: number, portfolioId: string) {
         try {
             // Récupérer le portefeuille associé à cet ID de propriétaire
@@ -203,6 +202,45 @@ export class PortfolioService {
         });
 
         return totalMarketValue;
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    async calculatePortfolioTotalGainOrLost(@Param('portfolioId') portfolioId: string){
+        try {
+            const getPortfoliosWithCompanies = await this.prisma.portfolio.findMany({
+                where: {
+                    id:portfolioId
+                },
+                include: {
+                    PortfolioCompany: { 
+                        include: {
+                            company: true 
+                        }
+                    }
+                },
+                orderBy: {
+                    createdAt: 'asc' 
+                }
+            })
+
+            let totalMarketValue = 0;
+            getPortfoliosWithCompanies.forEach(portefeuille => {
+                portefeuille.PortfolioCompany.forEach(entreprise => {
+                    totalMarketValue += entreprise.company.marketValue;
+                });
+
+            });
+
+            const getPortfolios = await this.prisma.portfolio.findMany({
+                where: {
+                    id:portfolioId
+            }})
+
+        const totalMoneyInput = getPortfolios[0].moneyInput
+        const totalPortFolioGainOrLost = totalMarketValue - totalMoneyInput
+        return totalPortFolioGainOrLost;
         } catch (error) {
             console.log(error)
         }

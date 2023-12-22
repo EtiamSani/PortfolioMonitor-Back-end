@@ -27,10 +27,14 @@ export class PortfolioController {
     modificationOfPortfolio(@Param('portfolioId') portfolioId: string, @Body() dto:PortfolioDto ){
         return this.portfolioService.modificationOfPortfolio(portfolioId, dto)
     }
-
+    // calculatePortfolioTotalGainOrLost
     @Get('get-portfolio/market-value/:portfolioId')
         calculatePortfolioMarketValue(@Param('portfolioId') portfolioId: string){
             return this.portfolioService.calculatePortfolioMarketValue(portfolioId)
         }
     
+    @Get('get-portfolio/total-gain-or-lost/:portfolioId')
+    calculatePortfolioTotalGainOrLost(@Param('portfolioId') portfolioId: string){
+            return this.portfolioService.calculatePortfolioTotalGainOrLost(portfolioId)
+        }
 }

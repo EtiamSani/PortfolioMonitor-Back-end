@@ -24,7 +24,7 @@ export class CompanyService {
                         pruValue:calculatedValues.pruValue,
                         marketValue:calculatedValues.marketValue,
                         gainOrLoss:calculatedValues.gainOrLoss,
-                        pvMvPercentage:calculatedValues.pvMvPercentage,
+                        pvMvPercentage:parseFloat(calculatedValues.pvMvPercentage),
                         stockCategory: dto.stockCategory,
                         gics: dto.gics,
                         country: dto.country,
