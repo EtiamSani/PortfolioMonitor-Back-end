@@ -157,7 +157,8 @@ export class BuyCompanyService {
     
     
         // Calcul du pourcentage de PV/MV
-        const pvMvPercentage = (((marketValue + dividendReceived) - pruValue) / pruValue) * 100;
+        const unformattedPvMvPercentage = (((marketValue + dividendReceived) - pruValue) / pruValue) * 100;
+        const pvMvPercentage = unformattedPvMvPercentage.toFixed(2);
         
         
         return {
