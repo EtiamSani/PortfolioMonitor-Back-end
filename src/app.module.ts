@@ -11,7 +11,8 @@ import { GatewayIntentBits } from 'discord.js';
 import { BotGateway } from './discord/bot.gateway';
 import { DiscordConfigService } from './discord/discord-config.service';
 import { SharesTransactionsModule } from './shares-transactions/shares-transactions.module';
-
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 const config = new ConfigService();
 @Module({
@@ -39,6 +40,10 @@ const config = new ConfigService();
     SellCompanyModule,
     DiscordModule,
     SharesTransactionsModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'), 
+       // L'URL à laquelle les ressources statiques seront servies
+    }),
   ],
   providers:[BotGateway]
 })

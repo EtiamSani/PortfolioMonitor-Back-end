@@ -7,12 +7,16 @@ export class CompanyService {
     constructor(private prisma: PrismaService){}
 
     async createCompanyAndConnectToPortfolio(dto:CompanyDTO, @Param('ownerPortfolioId') ownerPortfolioId:string){
-        
+        console.log(dto)
             try {
                 const stockPrice = await this.fetchStockPrice(dto.ticker);
                 const calculatedValues = await this.calculateStockValues(dto,stockPrice)
+                const ticker = dto.ticker
+                let sanitizedTicker = ticker.split(':');
+                let stockCode = sanitizedTicker[1];
                 const createdCompany = await this.prisma.company.create({
                     data: {
+                        logo: `/company-logos/${stockCode}.png`,
                         name: dto.name,
                         ticker: dto.ticker,
                         currency: dto.currency,

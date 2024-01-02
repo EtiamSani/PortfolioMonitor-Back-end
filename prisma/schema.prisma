@@ -12,6 +12,7 @@ datasource db {
 
 model Company {
   id             String     @id @default(uuid())
+  logo           String?
   name           String
   ticker         String
   currency       String
@@ -27,6 +28,8 @@ model Company {
   stockCategory  String
   gics           String?
   country        String
+  annualDividends Float?
+  dividendsReceived Float?
   buy            Buy[]
   sell           Sell[]
   dividend       Dividend[]

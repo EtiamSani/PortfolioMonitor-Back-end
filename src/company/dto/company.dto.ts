@@ -2,6 +2,8 @@ import { IsNumber, IsString } from "class-validator";
 
 export class CompanyDTO {
     @IsString()
+    logo?: string | null;
+    @IsString()
     name: string;
     @IsString()
     ticker: string;
@@ -31,5 +33,9 @@ export class CompanyDTO {
     gics?: string | null;
     @IsString()
     country: string;
+    @IsNumber()
+    annualDividends?: number | null;
+    @IsNumber()
+    dividendsReceived?: number | null;
  
 }
