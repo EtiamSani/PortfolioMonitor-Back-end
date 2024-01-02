@@ -1,5 +1,5 @@
 import { Injectable, Param } from '@nestjs/common';
-import { CompanyDTO } from './dto';
+import { CompanyDTO, updateCompanyDividendsDTO } from './dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -32,6 +32,7 @@ export class CompanyService {
                         stockCategory: dto.stockCategory,
                         gics: dto.gics,
                         country: dto.country,
+                        dividendsReceived:dto.dividendsReceived
                         
                     },
                 });
@@ -135,10 +136,10 @@ async fetchStockPrice(ticker: string): Promise<number> {
 async calculateStockValues(dto: any, stockPrice:any) {
     
     const { numberOfStocks, pru } = dto;
-    let { dividendReceived } = dto; 
+    let { dividendsReceived } = dto; 
 
-        if (dividendReceived == undefined){
-            dividendReceived = 0
+        if (dividendsReceived == undefined){
+            dividendsReceived = 0
            
         }
 
@@ -152,7 +153,7 @@ async calculateStockValues(dto: any, stockPrice:any) {
     const gainOrLoss = marketValue - pruValue;
 
     // Calcul du pourcentage de PV/MV
-    const unformattedPvMvPercentage = (((marketValue + dividendReceived) - pruValue) / pruValue) * 100;
+    const unformattedPvMvPercentage = (((marketValue + dividendsReceived) - pruValue) / pruValue) * 100;
     const pvMvPercentage = unformattedPvMvPercentage.toFixed(2);
   
     return {
@@ -193,6 +194,24 @@ async updateLiquidity(companyId: string, amount: number) {
     } catch (error) {
         console.log(error);
         throw new Error('Une erreur est survenue lors de la mise à jour de la liquidité.');
+    }
+}
+
+async updateDividendsReceived(dto:updateCompanyDividendsDTO, @Param('companyId') companyId:string) {
+    console.log(dto)
+    try {
+        const updatedCompany = await this.prisma.company.update({
+            where: {
+                id: companyId, // Utilisation de l'ID pour cibler l'entreprise spécifique à mettre à jour
+            },
+            data: {
+                dividendsReceived: dto.dividendsReceived,
+            },
+        });
+        return updatedCompany
+    } catch (error) {
+        console.log(error);
+        throw new Error('Une erreur est survenue lors de la mise a jour de l\'entreprise.');
     }
 }
 
