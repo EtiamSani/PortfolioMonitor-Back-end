@@ -48,7 +48,7 @@ export class SellCompanyService {
             const currentStockPrice = getReturnOfSelledShare.currentStockPrice
             const updateNumberOfSharesInCompany = getReturnOfSelledShare.numberOfStocks
             const companyCurrentPru = getReturnOfSelledShare.pru
-            const calculatedValues = await this.calculateStockValues(dto,currentStockPrice,updateNumberOfSharesInCompany,companyCurrentPru)
+            const calculatedValues = await this.calculateStockValues(dto,currentStockPrice,updateNumberOfSharesInCompany,companyCurrentPru,companyId)
             await this.updateCompanyWithCalculatedValues(companyId, calculatedValues);
             
             const message = `__**Vente :**__ de ${dto.numberOfStocks} nouvel action(s) de **${dto.nature}** au prix de ${dto.priceOfShare} € ! \n **Motivation :** ${dto.objective}. \n **Commentaire :** ${dto.message}.`;
@@ -125,14 +125,17 @@ export class SellCompanyService {
         }
     }
 
-    async calculateStockValues(dto: any, currentStockPrice:any,updateNumberOfSharesInCompany:any,companyCurrentPru:any ) {
+    async calculateStockValues(dto: any, currentStockPrice:any,updateNumberOfSharesInCompany:any,companyCurrentPru:any, companyId) {
         
-       
-        let { dividendReceived } = dto; 
-
-        if (dividendReceived == undefined){
-            dividendReceived = 0
-           
+       const getDividedsReceived = await this.prisma.company.findMany({
+        where: {
+            id: companyId
+        }
+       })
+        let dividendReceived = getDividedsReceived[0].dividendsReceived
+      
+        if (dividendReceived == undefined || null){
+            dividendReceived = 0   
         }
     
         // Calcul de la valeur PRU

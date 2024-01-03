@@ -49,7 +49,7 @@ export class BuyCompanyService {
             const updateNumberOfSharesInCompany = getReturnOfAddNewBoughtShare.numberOfStocks
             
             this.updatePru(companyId, dto.newPru)
-            const calculatedValues = await this.calculateStockValues(dto,currentStockPrice,updateNumberOfSharesInCompany)
+            const calculatedValues = await this.calculateStockValues(dto,currentStockPrice,updateNumberOfSharesInCompany,companyId)
             // il faut mainteant stocker ces nouvelle valeur dans la table
             await this.updateCompanyWithCalculatedValues(companyId, calculatedValues);
             
@@ -136,12 +136,18 @@ export class BuyCompanyService {
         }
     }
 
-    async calculateStockValues(dto: any, currentStockPrice:any,updateNumberOfSharesInCompany:any ) {
+    async calculateStockValues(dto: any, currentStockPrice:any,updateNumberOfSharesInCompany:any,companyId ) {
         
         const { newPru } = dto;
-        let { dividendReceived } = dto; 
+        const getDividedsReceived = await this.prisma.company.findMany({
+            where: {
+                id: companyId
+            }
+           })
 
-        if (dividendReceived == undefined){
+        let dividendReceived = getDividedsReceived[0].dividendsReceived
+
+        if (dividendReceived == undefined || null){
             dividendReceived = 0
            
         }
@@ -180,7 +186,7 @@ export class BuyCompanyService {
                     pruValue: calculatedValues.pruValue,
                     marketValue: calculatedValues.marketValue,
                     gainOrLoss: calculatedValues.gainOrLoss,
-                    pvMvPercentage: calculatedValues.pvMvPercentage,
+                    pvMvPercentage: parseFloat(calculatedValues.pvMvPercentage),
 
                 },
             });
