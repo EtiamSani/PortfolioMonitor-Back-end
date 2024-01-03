@@ -169,7 +169,7 @@ export class SellCompanyService {
                     pruValue: calculatedValues.pruValue,
                     marketValue: calculatedValues.marketValue,
                     gainOrLoss: calculatedValues.gainOrLoss,
-                    pvMvPercentage: calculatedValues.pvMvPercentage,
+                    pvMvPercentage: parseFloat(calculatedValues.pvMvPercentage),
 
                 },
             });

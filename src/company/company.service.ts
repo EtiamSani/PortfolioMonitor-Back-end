@@ -7,7 +7,7 @@ export class CompanyService {
     constructor(private prisma: PrismaService){}
 
     async createCompanyAndConnectToPortfolio(dto:CompanyDTO, @Param('ownerPortfolioId') ownerPortfolioId:string){
-        console.log(dto)
+    
             try {
                 const stockPrice = await this.fetchStockPrice(dto.ticker);
                 const calculatedValues = await this.calculateStockValues(dto,stockPrice)
@@ -172,7 +172,6 @@ async updateLiquidity(companyId: string, amount: number) {
                 id: companyId
             }
         });
-
         // Si le portefeuille existe
         if (portfolio) {
             const updatedLiquidity = portfolio.liquidity - amount;
@@ -198,7 +197,6 @@ async updateLiquidity(companyId: string, amount: number) {
 }
 
 async updateDividendsReceived(dto:updateCompanyDividendsDTO, @Param('companyId') companyId:string) {
-    console.log(dto)
     try {
         const updatedCompany = await this.prisma.company.update({
             where: {
@@ -208,10 +206,112 @@ async updateDividendsReceived(dto:updateCompanyDividendsDTO, @Param('companyId')
                 dividendsReceived: dto.dividendsReceived,
             },
         });
+        const findCompany = await this.prisma.company.findUnique({
+            where: {
+                id: companyId
+            }
+        })
+        
+        const calculatedPvMvPercentageWithDivdendIncluded = await this.calculatePvMvPercentagesWithDividendIncluded(dto,findCompany)
+        await this.updateCompanyPvMvToIncludeDividends(calculatedPvMvPercentageWithDivdendIncluded,companyId)
+        await this.addDividendsToLiquidity(companyId,dto.dividendsReceived)
         return updatedCompany
     } catch (error) {
         console.log(error);
         throw new Error('Une erreur est survenue lors de la mise a jour de l\'entreprise.');
+    }
+}
+
+async calculatePvMvPercentagesWithDividendIncluded(dto: any, findCompany:any) {
+
+
+    const {currentStockPrice, numberOfStocks, pru} = findCompany
+   
+    let { dividendsReceived } = dto; 
+
+
+
+    // Calcul de la valeur PRU
+    const pruValue = numberOfStocks * pru;
+
+    // Calcul de la valeur de marché
+    const marketValue = numberOfStocks * currentStockPrice;
+
+
+    // Calcul du pourcentage de PV/MV
+    const unformattedPvMvPercentage = (((marketValue + dividendsReceived) - pruValue) / pruValue) * 100;
+    const pvMvPercentage = unformattedPvMvPercentage.toFixed(2);
+   
+  
+    return pvMvPercentage
+
+}
+
+async updateCompanyPvMvToIncludeDividends(calculatedPvMvPercentageWithDivdendIncluded: any, @Param('companyId') companyId:string) {
+    try {
+        const updatedCompany = await this.prisma.company.update({
+            where: {
+                id: companyId,
+            },
+            data: {
+                pvMvPercentage: parseFloat(calculatedPvMvPercentageWithDivdendIncluded),
+                
+            },
+        });
+        return updatedCompany
+    } catch (error) {
+        console.log(error);
+        throw new Error('Une erreur est survenue lors de la mise a jour de l\'entreprise.');
+    }
+}
+
+async addDividendsToLiquidity(companyId: string, amount: number) {
+    console.log(companyId)
+    
+    
+    try {
+        const companyWithPortfolio = await this.prisma.company.findUnique({
+            where: {
+                id: companyId,
+            },
+            include: {
+                PortfolioCompany: {
+                    include: {
+                        portfolio: true,
+                    },
+                },
+            },
+        });
+        const portfolioId = companyWithPortfolio.PortfolioCompany[0].portfolio.id;
+        // Obtenez le portefeuille
+        
+        const portfolio = await this.prisma.portfolio.findFirst({
+            where: {
+                id: portfolioId
+            }
+        });
+        console.log(portfolio, 'portfolio')
+        // Si le portefeuille existe
+        if (portfolio) {
+            const updatedLiquidity = portfolio.liquidity + amount;
+
+            // Mettez à jour la liquidité dans la table Portfolio
+            const updatedLiquidityAfterDividends = await this.prisma.portfolio.updateMany({
+                where: {
+                    id: portfolioId
+                },
+                data: {
+                    liquidity: updatedLiquidity
+                }
+            });
+        
+            return updatedLiquidity;
+        } else {
+            throw new Error('Le portefeuille n\'existe pas.');
+        }
+    } catch (error) {
+        console.log(error);
+        throw new Error('Une erreur est survenue lors de la mise à jour de la liquidité.');
     }
 }
 
