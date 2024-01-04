@@ -13,6 +13,7 @@ import { DiscordConfigService } from './discord/discord-config.service';
 import { SharesTransactionsModule } from './shares-transactions/shares-transactions.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { OwnerAnalysisModule } from './owner-analysis/owner-analysis.module';
 
 const config = new ConfigService();
 @Module({
@@ -44,6 +45,7 @@ const config = new ConfigService();
       rootPath: join(__dirname, '..', 'public'), 
        // L'URL à laquelle les ressources statiques seront servies
     }),
+    OwnerAnalysisModule,
   ],
   providers:[BotGateway]
 })

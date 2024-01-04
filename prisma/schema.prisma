@@ -79,7 +79,9 @@ model PortfolioOwner {
   verifyToken      String?         @default(uuid())
   password          String
   portfolio         Portfolio[]
-  PortfolioFollower PortfolioFollower[]
+  portfolioFollower PortfolioFollower[]
+  analysis          Analysis[]
+
 }
 
 model Portfolio {
@@ -118,4 +120,18 @@ model PortfolioFollower {
   portfolioOwnerId String
   Portfolio        Portfolio?     @relation(fields: [portfolioId], references: [id])
   portfolioId      String?
+}
+
+model Analysis {
+  id  String  @id @default(uuid())
+  file Bytes
+  fileName String?
+  fairValue Float?
+  stockCategory  String?
+  peaOrCto String?
+  entryPoint Float?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  portfolioOwner    PortfolioOwner      @relation(fields: [portfolioOwnerId], references: [id], onDelete: Cascade)
+  portfolioOwnerId String
 }
