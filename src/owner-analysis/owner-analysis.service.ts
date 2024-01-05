@@ -1,4 +1,4 @@
-import { Injectable, Param } from '@nestjs/common';
+import { Injectable, NotFoundException, Param } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -23,5 +23,17 @@ export class OwnerAnalysisService {
 
     async getAllAnalysisPDFs() {
         return this.prisma.analysis.findMany();
+    }
+
+    async downloadPDF(pdfId: string) {
+        const analysis = await this.prisma.analysis.findUnique({
+            where: { id: pdfId },
+        });
+
+        if (!analysis) {
+            throw new NotFoundException('PDF not found');
+        }
+
+        return analysis;
     }
 }
